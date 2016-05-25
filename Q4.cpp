@@ -2,36 +2,53 @@
 #include <stdlib.h> 
 #include <time.h>
 
-int choose(int array[], int);
+#define MIN 10
+#define MAX 412
+#define SIZE MAX-MIN+1
+#define DRAW 18
+
+int *generate_random_list();
+int choose(int *, int);
 
 int main (void)
 {  
-	int total=412, num=412, i=0, j=0, n=5;
-	int arr[total]={0}, rand_arr[num]={0};
+	int *random_array;
+	int i=0, position=3;
 	
-	for(i=0; i<total; i++)	// Generate an array from 1 to 412
-		arr[i] = i+1;
+	random_array = generate_random_list();
 	
-	puts("Array :");
+	printf("Draw %d Random number from %d to %d  :\n", DRAW, MIN, MAX);
+	for(i=0; i<DRAW; i++)
+		printf("%03d ", *(random_array+i));
 	
-    srand(time(NULL));		// 取得時間序列, 以時間序列當亂數種子
-	for(i=0; i<total; i++)
-	{
-		j = rand()%num;			// Generate random number from 0 to num.
-		rand_arr[i] = arr[j];
-		arr[j] = arr[num-1];	// j-th number is replaced by the last number
-		num--;					// Reduce the range of random number
-		
-		printf("%3d ", rand_arr[i]);
-	}
-	
-	printf("\n\n%d-th Number is %d", n, choose(rand_arr, n));
+	printf("\n\n%d-th Number is %d", position, choose(random_array, position));
 	
     return 0; 
 }
 
-int choose(int array[], int n)
+int *generate_random_list()
+{	
+	int array_size=SIZE, i=0, rand_num=0;
+	int *arr=new int[array_size];
+	int *rand_arr=new int[DRAW];
+	
+	for(i=0; i<array_size; i++)						// Generate an array from MIN to MAX
+		*(arr+i) = MIN+i;							// arr[MAX]={MIN, MIN+1, MIN+2, ..., MAX}
+	
+    srand(time(NULL));								// 取得時間序列time(NULL), 以時間序列當亂數種子
+	for(i=0; i<DRAW; i++)
+	{
+		rand_num = rand()%array_size;				// Generate a random number from 0 to DRAW.
+		*(rand_arr+i) = *(arr+rand_num);
+		*(arr+rand_num) = *(arr+(array_size-1));	// rand_num-th number is replaced by the last number
+		array_size--;								// Reduce the range of random number
+	}
+	delete [] arr;
+	return rand_arr;
+}
+
+int choose(int *array, int index)
 {
-	return array[n-1];
+	return *(array+(index-1));
 }
 
